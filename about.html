@@ -469,7 +469,24 @@
 		/* 經歷內容 */
 		.timeline__content {
 			flex-grow: 1; /* 讓內容自動填滿剩餘寬度 */
-		}    </style>
+		}    
+		
+		
+		/* ==========================================================================
+           11. 留言
+           ========================================================================== */
+		.main-content__card--gray {
+            background-color: #1E1E20; 
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 40px 45px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 1s ease-out forwards;
+        }
+		
+		
+		</style>
 
     <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 </head>
@@ -637,21 +654,28 @@
 				</div>
 			</div>
 			
-			<script src="https://giscus.app/client.js"
-					data-repo="Hsuan0528/Hsuan0528.github.io"
-					data-repo-id="R_kgDOS7UnRw"
-					data-category="General"
-					data-category-id="DIC_kwDOS7UnR84C_RcQ"
-					data-mapping="pathname"
-					data-strict="0"
-					data-reactions-enabled="1"
-					data-emit-metadata="0"
-					data-input-position="bottom"
-					data-theme="noborder_gray"
-					data-lang="zh-TW"
-					crossorigin="anonymous"
-					async>
-			</script>
+			
+			<div class="main-content__card--gray">
+				<h3 class="main-content__title">Comments</h3>
+				
+				<!-- Giscus 程式碼維持不動 -->
+				<script src="https://giscus.app/client.js"
+						data-repo="Hsuan0528/Hsuan0528.github.io"
+						data-repo-id="R_kgDOS7UnRw"
+						data-category="General"
+						data-category-id="DIC_kwDOS7UnR84C_RcQ"
+						data-mapping="pathname"
+						data-strict="0"
+						data-reactions-enabled="1"
+						data-emit-metadata="0"
+						data-input-position="top"
+						data-theme="noborder_gray"
+						data-lang="en"
+						crossorigin="anonymous"
+						async>
+				</script>
+			</div>
+			
 		</main>
 
 
