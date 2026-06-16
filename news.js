@@ -1,0 +1,3 @@
+const newsData = `
+coming soon~~
+`;
