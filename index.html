@@ -29,17 +29,17 @@
         }
         
         ::-webkit-scrollbar-track {
-            background: #352038; /* 軌道維持深色背景，確保整體一致性 */
+            background: #352038; 
         }
         
         ::-webkit-scrollbar-thumb {
-            background-color: #E2D5E3; /* 淺色系滑桿 */
+            background-color: #E2D5E3; 
             border-radius: 10px;
             border: 2px solid #352038;
         }
         
         ::-webkit-scrollbar-thumb:hover {
-            background-color: #ffd2ff; /* 懸停時轉為溫暖的淺粉色 */
+            background-color: #ffd2ff; 
         }
         
         body {
@@ -78,12 +78,14 @@
 		}
 
         .header__logo {
-            color: #FFFFFF;
-            font-family: 'Great Vibes', cursive;
-            font-size: 32px; 
-            letter-spacing: 1.5px;
-            font-weight: bold;
-        }
+			color: #FFFFFF !important;
+			font-family: 'Great Vibes', cursive;
+			font-size: 32px; 
+			letter-spacing: 1.5px;
+			font-weight: bold;
+			text-decoration: none; /* 移除連結預設的底線 */
+			transition: opacity 0.3s;
+		}
 
         .header__nav a {
             color: #E2D5E3;
@@ -181,12 +183,12 @@
 			border: 0.5px solid rgba(230, 210, 240, 0.02);
 			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 			padding: 40px 45px;
-			margin-bottom: 30px; /* 兩個方塊之間的距離 */
+			margin-bottom: 30px;
 			animation: fadeIn 1s ease-out forwards;
 		}
 		.main-content {
 			flex: 3.5;
-			background: transparent; /* 改為透明，因為內容已經有卡片背景了 */
+			background: transparent;
 			box-shadow: none;
 			padding: 0;
 		}
@@ -269,12 +271,12 @@
 			padding: 0;
 			display: flex;
 			flex-direction: column;
-			gap: 10px; /* 控制每一組之間的垂直間距 */
+			gap: 10px; 
 		}
 
 		.counter-item {
 			display: flex;
-			justify-content: space-between; /* 關鍵：讓標題靠左，數值靠右 */
+			justify-content: space-between;
 			align-items: center;
 		}
 
@@ -286,7 +288,7 @@
 			align-items: center;
 		}
 
-		/* 如果你還是想保留那個圓點，可以這樣寫 */
+	
 		.counter-list dt::before {
 			content: "•";
 			color: #D2C9D4;
@@ -296,9 +298,9 @@
 		}
 
 		.counter-list dd {
-			margin: 0; /* 清除舊有的 margin */
+			margin: 0;
 			font-size: 15px;
-			color: #FFFFFF; /* 讓數字稍微亮一點，對比更好看 */
+			color: #FFFFFF; 
 			font-weight: bold;
 		}
 
@@ -409,6 +411,8 @@
                 height: 40px;
                 font-size: 18px;
             }
+			
+	
         }
         
         /* ==========================================================================
@@ -433,15 +437,15 @@
 		.timeline__item {
 			display: flex;
 			align-items: baseline;
-			margin-bottom: 18px; /* 加大間距：從 8px 改為 18px，讓項目間更寬敞 */
+			margin-bottom: 18px;
 			font-size: 0.95rem;
 		}
 		
 		.timeline__year {
 			font-size: 1.1rem;
 			font-weight: bold;
-			color: #FFFFFF;     /* 年份設為純白，與一般比賽內容區隔 */
-			margin: 25px 0 12px 0; /* 年份上下的間距 */
+			color: #FFFFFF;    
+			margin: 25px 0 12px 0; 
 		
 			padding-bottom: 5px;
 		}
@@ -468,15 +472,149 @@
 
 		/* 經歷內容 */
 		.timeline__content {
-			flex-grow: 1; /* 讓內容自動填滿剩餘寬度 */
-		}    </style>
+			flex-grow: 1;
+		}    
+		
+		
+		/* ==========================================================================
+           11. 留言
+           ========================================================================== */
+		.main-content__card--gray {
+            background-color: #1E1E20; 
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 40px 45px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 1s ease-out forwards;
+        }
+		
+		
+		/* ==========================================================================
+			12. 文章目錄
+	   ========================================================================== */
 
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		.post-item { 
+			display: flex; 
+			justify-content: space-between; 
+			align-items: center; 
+			padding: 10px 0; 
+			border-bottom: 1px solid rgba(255,255,255,0.1); 
+		}
+
+		/* 文章名稱 */
+		.post-title {
+			color: #EAEAEA;
+			text-decoration: none;
+			font-size: 0.95rem;
+			transition: transform 0.2s ease, color 0.2s ease;
+			display: inline-block;
+		}
+
+		.post-title:hover {
+			color: #ffd2ff;
+			transform: translateX(10px);
+		}
+
+		/* 日期 */
+		.post-date { 
+			color: #8C7B90; 
+			font-size: 0.85rem;
+			font-variant-numeric: tabular-nums;
+			flex-shrink: 0;
+			margin-left: 20px;
+		}
+
+		.tag { 
+			background: rgba(157, 119, 166, 0.2);
+			color: #E2D5E3; padding: 2px 8px; border-radius: 4px; 
+			font-size: 12px; 
+			margin-left: 10px; 
+		}
+		.pagination-container {
+			margin-top: 20px; 
+			text-align: center; 
+		}
+		.pagination-container button { 
+			background: rgba(157, 119, 166, 0.4); 
+			color: #FFF; border: none;
+			padding: 5px 12px; margin: 0 5px;
+			cursor: pointer; 
+			border-radius: 4px;
+		}
+    
+		#category-sections .main-content__card {
+			min-height: auto; 
+			margin-bottom: 30px;
+		}
+		
+		
+		.category-subtitle {
+			font-size: 1rem;
+			font-weight: bold;
+			color: #FFFFFF;   
+			margin: 25px 0 12px 0;
+			padding-bottom: 5px;
+		}
+
+		.category-group {
+			margin-bottom: 45px; /* 增加分類與分類之間的垂直間距 */
+			padding-bottom: 15px;
+			border-bottom: 1px solid rgba(255, 255, 255, 0.03); /* 加入淡淡的分隔線，層次更明顯 */
+			
+			animation: fadeIn 0.8s ease-out forwards;
+		}
+
+	
+		.dot-typing {
+			position: relative;
+			left: -9999px;
+			width: 3px;
+			height: 3px;
+			border-radius: 3px;
+			background-color: #E2D5E3;
+			color: #E2D5E3;
+			box-shadow: 9984px 0 0 0 #E2D5E3, 9999px 0 0 0 #E2D5E3, 10014px 0 0 0 #E2D5E3;
+			animation: dotTyping 1.5s infinite linear;
+			margin: 50px auto;
+		}
+
+		@keyframes dotTyping {
+			0% { box-shadow: 9984px 0 0 0 #E2D5E3, 9999px 0 0 0 #E2D5E3, 10014px 0 0 0 #E2D5E3; }
+			16.667% { box-shadow: 9984px -10px 0 0 #E2D5E3, 9999px 0 0 0 #E2D5E3, 10014px 0 0 0 #E2D5E3; }
+			33.333% { box-shadow: 9984px 0 0 0 #E2D5E3, 9999px -10px 0 0 #E2D5E3, 10014px 0 0 0 #E2D5E3; }
+			50% { box-shadow: 9984px 0 0 0 #E2D5E3, 9999px 0 0 0 #E2D5E3, 10014px -10px 0 0 #E2D5E3; }
+			66.667% { box-shadow: 9984px 0 0 0 #E2D5E3, 9999px 0 0 0 #E2D5E3, 10014px 0 0 0 #E2D5E3; }
+			83.333% { box-shadow: 9984px 0 0 0 #E2D5E3, 9999px 0 0 0 #E2D5E3, 10014px 0 0 0 #E2D5E3; }
+		}
+		
+		.view-more-btn {
+			display: inline-block;
+			padding: 0;
+			background: transparent; /* 移除背景色 */
+			color: #E2D5E3;
+			font-size: 14px;
+			text-decoration: underline; /* 直接顯示底線 */
+			text-underline-offset: 6px; /* 調整底線與文字的距離 */
+			border: none; /* 移除邊框 */
+			transition: all 0.3s ease;
+		}
+
+		.view-more-btn:hover {
+			color: #FFFFFF;
+			text-decoration: underline;
+			text-underline-offset: 6px;
+			transform: translateX(5px); /* 改為向右平移的動畫 */
+		}
+		
+	</style>
+	
+	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 </head>
 <body>
 
     <header class="header">
-        <div class="header__logo">Hsuan's Corner</div>
+        <a href="https://hsuan0528.github.io/" class="header__logo">Hsuan's Corner</a>
         <nav class="header__nav">
             <a href="https://hsuan0528.github.io/">Home</a>
             <a href="https://hsuan0528.github.io/posts">Posts</a>
@@ -501,16 +639,50 @@
 					<p>Here, you'll find my coding notes, competitive reflections, creative endeavors, or whatever else comes next.</p>
 				</div>
 			</div>
+			
+			
+			
+			<div class="main-content__card">
+				<h3 class="main-content__title" id="articles">Posts</h3>
+				<div id="posts-by-category">
+					<div class="dot-typing"></div>
+				</div>
+			</div>
+
+			
+			
+			<div class="main-content__card--gray">
+				<h3 class="main-content__title">Comments</h3>
+				
+				<!-- Giscus 程式碼維持不動 -->
+				<script src="https://giscus.app/client.js"
+						data-repo="Hsuan0528/Hsuan0528.github.io"
+						data-repo-id="R_kgDOS7UnRw"
+						data-category="General"
+						data-category-id="DIC_kwDOS7UnR84C_RcQ"
+						data-mapping="pathname"
+						data-strict="0"
+						data-reactions-enabled="1"
+						data-emit-metadata="0"
+						data-input-position="top"
+						data-theme="noborder_gray"
+						data-lang="en"
+						crossorigin="anonymous"
+						async>
+				</script>
+			</div>
 		</main>
 
 
-        <aside class="sidebar">
+       <aside class="sidebar">
 		
 		
 		
 			<div class="sidebar__card" id="txt-content">
 				<h3 class="sidebar__title">News</h3>
-				<p style="margin-bottom: 8px; font-size: 15px; color: #D2C9D4; line-height: 1.6;">Loading news...</p>
+				<div id="news-loading" style="text-align: center; padding: 20px;">
+					<div class="dot-typing"></div>
+				</div>
 			</div>
 
             <div class="sidebar__card">
@@ -534,10 +706,13 @@
 				<h3 class="sidebar__title">Links</h3>
 				<div class="link-list">
 					<div class="link-list__item">
+						<a href="https://github.com/Hsuan0528" target="_blank" rel="noopener noreferrer">Github</a>
+					</div>
+					<div class="link-list__item">
 						<a href="http://discordapp.com/users/924574976235929650" target="_blank" rel="noopener noreferrer">Discord</a>
 					</div>
 					<div class="link-list__item">
-						<a href="http://discordapp.com/users/924574976235929650" target="_blank" rel="noopener noreferrer">IG</a>
+						<a href="https://www.instagram.com/hsuan._.0528/" target="_blank" rel="noopener noreferrer">IG</a>
 					</div>
 				</div>
             </div>
@@ -549,8 +724,9 @@
     <a href="#" class="back-to-top-btn">▲</a>
 
     <footer class="footer">
-        <p>&copy; 2026 Hsuan's Blog. All rights reserved.</p>
+        <p>&copy; 2026 Hsuan's Corner. All rights reserved.</p>
     </footer>
+	
 	
 	<script>
 		let lastScrollY = window.scrollY;
@@ -559,7 +735,6 @@
 		window.addEventListener('scroll', () => {
 			const currentScrollY = window.scrollY;
 			
-			// 如果向下滾動且滾動距離超過 100px，則隱藏；否則顯示
 			if (currentScrollY > lastScrollY && currentScrollY > 100) {
 				header.classList.add('header--hidden');
 			} else {
@@ -575,17 +750,79 @@
 		const card = document.getElementById('txt-content');
 		const titleHTML = '<h3 class="sidebar__title">News</h3>';
 		
-		// 檢查 newsData 是否存在
 		if (typeof newsData !== 'undefined') {
 			const paragraphs = newsData.split('\n')
 								   .filter(line => line.trim() !== "")
 								   .map(line => `<p style="margin-bottom: 8px; font-size: 15px; color: #D2C9D4; line-height: 1.6;">${line.trim()}</p>`)
 								   .join('');
 			card.innerHTML = titleHTML + paragraphs;
-		} else {
-			card.innerHTML = titleHTML + '<p style="color: #D2C9D4;">目前沒有新聞。</p>';
 		}
 	</script>
+	
+	<script src="posts.js"></script>
+	<script>
+		function renderPostsByCategory() {
+			const container = document.getElementById('posts-by-category');
+			if (!container) return;
+			container.innerHTML = '';
+
+			const grouped = posts.reduce((acc, p) => {
+				if (!acc[p.category]) acc[p.category] = [];
+				acc[p.category].push(p);
+				return acc;
+			}, {});
+
+			categorySettings.forEach(cat => {
+				const list = grouped[cat.name];
+				if (list) {
+					// 1. 先排序：日期越新的越前面 (b - a)
+					const sortedList = list.sort((a, b) => new Date(b.date) - new Date(a.date));
+					
+					// 2. 只取該分類設定數量的前幾篇 (cat.limit)
+					const displayList = sortedList.slice(0, cat.limit);
+					
+					const section = document.createElement('div');
+					section.className = 'category-group';
+					
+					let htmlContent = `
+						<h4 class="category-subtitle">
+							<a href="posts.html#cat-${cat.name.replace(/\s+/g, '')}" style="color: inherit; text-decoration: none;">
+								${cat.name}
+							</a>
+						</h4>
+						${displayList.map(p => `
+							<div class="post-item">
+								<div style="display: flex; align-items: center;">
+									<div class="timeline__dot" style="margin-right: 12px;"></div>
+									<a href="${p.link}" class="post-title">${p.title}</a>
+								</div>
+								<span class="post-date">${p.date.replace(/-/g, '.')}</span>
+							</div>
+						`).join('')}
+					`;
+
+					htmlContent += `
+						<div style="margin-top: 20px; text-align: right;">
+							<a href="posts.html#cat-${cat.name.replace(/\s+/g, '')}" class="view-more-btn">View more →</a>
+						</div>
+					`;
+					
+
+					section.innerHTML = htmlContent;
+					container.appendChild(section);
+				}
+			});
+		}
+
+		renderPostsByCategory();
+
+		window.addEventListener('load', () => {
+			if (typeof posts === 'undefined' || typeof categorySettings === 'undefined') {
+				document.getElementById('posts-by-category').innerHTML = "資料載入失敗，請檢查 posts.js。";
+			}
+		});
+	</script>
+
 
 </body>
 </html>
