@@ -17,3 +17,11 @@ articles 存放文章的資料夾
 
 
 icon.png   圖片
+
+
+
+每次新增文章時 需改動: 
+
+posts.js 增新路徑
+
+articles 增加資料夾和裡面內容
