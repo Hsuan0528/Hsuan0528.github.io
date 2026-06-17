@@ -5,13 +5,8 @@ const categorySettings = [
 
 
 
-const posts = [
-{ 
-	title: "EGOI 2026 Contest", 
-	date: "2026-06-02", 
-	category: "Coding", 
-	tags: ["Competitive Programming"], 
-	link: "posts/egoi-contest.html" 
-}
 
+const posts = [
+    "articles/2026/test",
+    "articles/2026/another-post"
 ];

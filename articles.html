@@ -623,9 +623,9 @@
     </header>
     
     <div class="hero">
-        <h1 class="hero__title">Here is Hsuan's Corner.</h1>
+        <h1 id="title" class="hero__title">Loading...</h1>
         <div class="hero__meta">
-            <span>Thoughts. Ideas. Life.</span>
+            <span id="date"></span> | Tags: <span id="tags"></span>
         </div>
     </div>
     
@@ -633,13 +633,11 @@
         
         <main class="main-content">
 			<div class="main-content__card">
-				<h3 class="main-content__title">About the Corner</h3>
-				<div class="main-content__text">
-					<p>Established in June 2026, Hsuan's Corner is my personal creative hub.</p>
-					<p>Here, you'll find my coding notes, competitive reflections, creative endeavors, or whatever else comes next.</p>
+				<div id="content" class="main-content__text">
+					<div class="dot-typing"></div>
 				</div>
 			</div>
-			
+		
 			
 			
 			<div class="main-content__card">
@@ -728,6 +726,49 @@
     </footer>
 	
 	
+	
+	<script>
+		async function loadPost() {
+			const params = new URLSearchParams(window.location.search);
+			const postPath = params.get('path');
+			
+			// If no path is provided, stop execution
+			if (!postPath) return;
+
+			// Dynamically load the info.js file
+			const script = document.createElement('script');
+			script.src = `${postPath}/info.js`;
+			document.body.appendChild(script);
+
+			try {
+				// Fetch the content.txt file
+				const response = await fetch(`${postPath}/content.txt`);
+				if (!response.ok) throw new Error("File not found");
+				const text = await response.text();
+				
+				// Execute after info.js is loaded
+				script.onload = () => {
+					document.getElementById('title').innerText = postInfo.title;
+					document.getElementById('date').innerText = postInfo.date;
+					
+					// Map tags into span elements
+					document.getElementById('tags').innerHTML = postInfo.tags
+						.map(t => `<span class="tag">${t}</span>`)
+						.join(' ');
+					
+					// Replace line breaks with <br> for display
+					document.getElementById('content').innerHTML = text.replace(/\n/g, '<br>');
+				};
+			} catch (err) {
+				// Display error message if loading fails
+				document.getElementById('content').innerText = "Failed to load the article.";
+			}
+		}
+		
+		window.addEventListener('DOMContentLoaded', loadPost);
+	</script>
+	
+	
 	<script>
 		let lastScrollY = window.scrollY;
 		const header = document.querySelector('.header');
@@ -760,65 +801,64 @@
 	</script>
 	
 	<script src="posts.js"></script>
-	<script>
-		async function renderPostsByCategory() {
-			const container = document.getElementById('posts-by-category');
-			if (!container) return;
-			
-			// 1. 預讀取所有文章的 info.js
-			// 這裡會建立一個 Promise 陣列，等待所有檔案載入完成
-			const postsWithInfo = await Promise.all(posts.map(async (path) => {
-				return new Promise((resolve) => {
-					const script = document.createElement('script');
-					script.src = `${path}/info.js`;
-					// 載入成功後，將 postInfo 與路徑合併成一個物件
-					script.onload = () => {
-						resolve({ path: path, ...postInfo });
-					};
-					// 如果檔案遺失，則回傳 null
-					script.onerror = () => resolve(null);
-					document.body.appendChild(script);
-				});
-			}));
+<script>
+    async function renderPostsByCategory() {
+        const container = document.getElementById('posts-by-category');
+        if (!container) return;
+        
+        // 1. 預讀取所有文章的 info.js
+        // 這裡會建立一個 Promise 陣列，等待所有檔案載入完成
+        const postsWithInfo = await Promise.all(posts.map(async (path) => {
+            return new Promise((resolve) => {
+                const script = document.createElement('script');
+                script.src = `${path}/info.js`;
+                // 載入成功後，將 postInfo 與路徑合併成一個物件
+                script.onload = () => {
+                    resolve({ path: path, ...postInfo });
+                };
+                // 如果檔案遺失，則回傳 null
+                script.onerror = () => resolve(null);
+                document.body.appendChild(script);
+            });
+        }));
 
-			// 過濾掉載入失敗的項目
-			const validPosts = postsWithInfo.filter(p => p !== null);
+        // 過濾掉載入失敗的項目
+        const validPosts = postsWithInfo.filter(p => p !== null);
 
-			// 2. 自動根據 category 進行分組 (不需預定義 categorySettings)
-			const grouped = validPosts.reduce((acc, p) => {
-				if (!acc[p.category]) acc[p.category] = [];
-				acc[p.category].push(p);
-				return acc;
-			}, {});
+        // 2. 自動根據 category 進行分組 (不需預定義 categorySettings)
+        const grouped = validPosts.reduce((acc, p) => {
+            if (!acc[p.category]) acc[p.category] = [];
+            acc[p.category].push(p);
+            return acc;
+        }, {});
 
-			container.innerHTML = '';
+        container.innerHTML = '';
 
-			// 3. 渲染每一個分類區塊
-			Object.keys(grouped).forEach(catName => {
-				const sortedList = grouped[catName].sort((a, b) => new Date(b.date) - new Date(a.date));
-				
-				const section = document.createElement('div');
-				section.className = 'category-group';
-				
-				section.innerHTML = `
-					<h4 class="category-subtitle">${catName}</h4>
-					${sortedList.map(p => `
-						<div class="post-item">
-							<div style="display: flex; align-items: center;">
-								<div class="timeline__dot" style="margin-right: 12px;"></div>
-								<a href="articles.html?path=${p.path}" class="post-title">${p.title}</a>
-							</div>
-							<span class="post-date">${p.date.replace(/-/g, '.')}</span>
-						</div>
-					`).join('')}
-				`;
-				container.appendChild(section);
-			});
-		}
+        // 3. 渲染每一個分類區塊
+        Object.keys(grouped).forEach(catName => {
+            const sortedList = grouped[catName].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            const section = document.createElement('div');
+            section.className = 'category-group';
+            
+            section.innerHTML = `
+                <h4 class="category-subtitle">${catName}</h4>
+                ${sortedList.map(p => `
+                    <div class="post-item">
+                        <div style="display: flex; align-items: center;">
+                            <div class="timeline__dot" style="margin-right: 12px;"></div>
+                            <a href="articles.html?path=${p.path}" class="post-title">${p.title}</a>
+                        </div>
+                        <span class="post-date">${p.date.replace(/-/g, '.')}</span>
+                    </div>
+                `).join('')}
+            `;
+            container.appendChild(section);
+        });
+    }
 
-		renderPostsByCategory();
-	</script>
-
+    renderPostsByCategory();
+</script>
 
 
 </body>

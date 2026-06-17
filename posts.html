@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Hsuan's Corner!</title>
+    <title>Posts|Hsuan's Corner!</title>
     <link rel="icon" href="icon.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
     
@@ -652,9 +652,9 @@
     </header>
     
     <div class="hero">
-        <h1 class="hero__title">Here is Hsuan's Corner.</h1>
+        <h1 class="hero__title">My Posts.</h1>
         <div class="hero__meta">
-            <span>Thoughts. Ideas. Life.</span>
+            <span>A collection of thoughts and learnings.</span>
         </div>
     </div>
     
@@ -777,13 +777,32 @@
 		const itemsPerPage = 5;
 		const container = document.getElementById('category-container');
 
-		function renderPostsPage() {
+		// 核心修改：將此函數設為 async
+		async function renderPostsPage() {
 			if (typeof posts === 'undefined') {
 				container.innerHTML = '<p style="text-align:center;">找不到文章資料</p>';
 				return;
 			}
 
-			const grouped = posts.reduce((acc, p) => {
+			// 1. 預讀所有文章的 info.js 並合併資料
+			const allPosts = await Promise.all(posts.map(async (path) => {
+				return new Promise((resolve) => {
+					const script = document.createElement('script');
+					script.src = `${path}/info.js`;
+					script.onload = () => {
+						// 合併路徑、標題、分類、日期
+						resolve({ path, ...postInfo });
+					};
+					script.onerror = () => resolve(null);
+					document.body.appendChild(script);
+				});
+			}));
+
+			// 過濾掉載入失敗的
+			const validPosts = allPosts.filter(p => p !== null);
+
+			// 2. 原本的分組邏輯
+			const grouped = validPosts.reduce((acc, p) => {
 				if (!acc[p.category]) acc[p.category] = [];
 				acc[p.category].push(p);
 				return acc;
@@ -796,14 +815,10 @@
 				
 				const card = document.createElement('div');
 				card.className = 'category-card';
-				card.id = `cat-${safeId}`; //設定 ID 以便錨點跳轉
+				card.id = `cat-${safeId}`;
 				
 				card.innerHTML = `
-					<h2>
-						<a href="#cat-${safeId}" style="color: inherit; text-decoration: none;">
-							${catName}
-						</a>
-					</h2>
+					<h2><a href="#cat-${safeId}" style="color: inherit; text-decoration: none;">${catName}</a></h2>
 					<div id="grid-${safeId}"></div>
 					<div class="pagination" id="page-${safeId}"></div>
 				`;
@@ -812,7 +827,7 @@
 				renderGrid(catName, 1, sorted);
 			});
 
-			//頁面完全渲染後，自動平滑滾動到網址指定的錨點
+			// 錨點滾動
 			setTimeout(() => {
 				const hash = window.location.hash;
 				if (hash) {
@@ -838,7 +853,7 @@
 					<div class="post-item">
 						<div style="display: flex; align-items: center;">
 							<div class="timeline__dot"></div>
-							<a href="${p.link}" class="post-title">${p.title}</a>
+							<a href="article.html?path=${p.path}" class="post-title">${p.title}</a>
 						</div>
 						<span class="post-date">${p.date.replace(/-/g, '.')}</span>
 					</div>`;
