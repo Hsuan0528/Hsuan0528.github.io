@@ -801,64 +801,64 @@
 	</script>
 	
 	<script src="posts.js"></script>
-<script>
-    async function renderPostsByCategory() {
-        const container = document.getElementById('posts-by-category');
-        if (!container) return;
-        
-        // 1. 預讀取所有文章的 info.js
-        // 這裡會建立一個 Promise 陣列，等待所有檔案載入完成
-        const postsWithInfo = await Promise.all(posts.map(async (path) => {
-            return new Promise((resolve) => {
-                const script = document.createElement('script');
-                script.src = `${path}/info.js`;
-                // 載入成功後，將 postInfo 與路徑合併成一個物件
-                script.onload = () => {
-                    resolve({ path: path, ...postInfo });
-                };
-                // 如果檔案遺失，則回傳 null
-                script.onerror = () => resolve(null);
-                document.body.appendChild(script);
-            });
-        }));
+	<script>
+		async function renderPostsByCategory() {
+			const container = document.getElementById('posts-by-category');
+			if (!container) return;
+			
+			// 1. 預讀取所有文章的 info.js
+			// 這裡會建立一個 Promise 陣列，等待所有檔案載入完成
+			const postsWithInfo = await Promise.all(posts.map(async (path) => {
+				return new Promise((resolve) => {
+					const script = document.createElement('script');
+					script.src = `${path}/info.js`;
+					// 載入成功後，將 postInfo 與路徑合併成一個物件
+					script.onload = () => {
+						resolve({ path: path, ...postInfo });
+					};
+					// 如果檔案遺失，則回傳 null
+					script.onerror = () => resolve(null);
+					document.body.appendChild(script);
+				});
+			}));
 
-        // 過濾掉載入失敗的項目
-        const validPosts = postsWithInfo.filter(p => p !== null);
+			// 過濾掉載入失敗的項目
+			const validPosts = postsWithInfo.filter(p => p !== null);
 
-        // 2. 自動根據 category 進行分組 (不需預定義 categorySettings)
-        const grouped = validPosts.reduce((acc, p) => {
-            if (!acc[p.category]) acc[p.category] = [];
-            acc[p.category].push(p);
-            return acc;
-        }, {});
+			// 2. 自動根據 category 進行分組 (不需預定義 categorySettings)
+			const grouped = validPosts.reduce((acc, p) => {
+				if (!acc[p.category]) acc[p.category] = [];
+				acc[p.category].push(p);
+				return acc;
+			}, {});
 
-        container.innerHTML = '';
+			container.innerHTML = '';
 
-        // 3. 渲染每一個分類區塊
-        Object.keys(grouped).forEach(catName => {
-            const sortedList = grouped[catName].sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            const section = document.createElement('div');
-            section.className = 'category-group';
-            
-            section.innerHTML = `
-                <h4 class="category-subtitle">${catName}</h4>
-                ${sortedList.map(p => `
-                    <div class="post-item">
-                        <div style="display: flex; align-items: center;">
-                            <div class="timeline__dot" style="margin-right: 12px;"></div>
-                            <a href="articles.html?path=${p.path}" class="post-title">${p.title}</a>
-                        </div>
-                        <span class="post-date">${p.date.replace(/-/g, '.')}</span>
-                    </div>
-                `).join('')}
-            `;
-            container.appendChild(section);
-        });
-    }
+			// 3. 渲染每一個分類區塊
+			Object.keys(grouped).forEach(catName => {
+				const sortedList = grouped[catName].sort((a, b) => new Date(b.date) - new Date(a.date));
+				
+				const section = document.createElement('div');
+				section.className = 'category-group';
+				
+				section.innerHTML = `
+					<h4 class="category-subtitle">${catName}</h4>
+					${sortedList.map(p => `
+						<div class="post-item">
+							<div style="display: flex; align-items: center;">
+								<div class="timeline__dot" style="margin-right: 12px;"></div>
+								<a href="articles.html?path=${p.path}" class="post-title">${p.title}</a>
+							</div>
+							<span class="post-date">${p.date.replace(/-/g, '.')}</span>
+						</div>
+					`).join('')}
+				`;
+				container.appendChild(section);
+			});
+		}
 
-    renderPostsByCategory();
-</script>
+		renderPostsByCategory();
+	</script>
 
 
 </body>
