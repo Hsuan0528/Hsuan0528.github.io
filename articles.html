@@ -642,12 +642,13 @@
 		
 			
 			
+			<!--
 			<div class="main-content__card">
 				<h3 class="main-content__title" id="articles">Posts</h3>
 				<div id="posts-by-category">
 					<div class="dot-typing"></div>
 				</div>
-			</div>
+			</div> -->
 
 			
 			
@@ -730,39 +731,6 @@
 	
 	
 	<script>
-		// 專門負責載入文章內容的函數
-		async function loadPost(path) {
-			const contentElement = document.getElementById('content');
-			if (!contentElement) return;
-
-			try {
-				// 1. 同步獲取 JSON 資料與文章內容
-				const [infoResponse, textResponse] = await Promise.all([
-					fetch(`${path}/info.json`),
-					fetch(`${path}/content.txt`)
-				]);
-
-				const postInfo = await infoResponse.json();
-				const text = await textResponse.text();
-
-				// 2. 渲染 UI
-				document.getElementById('title').innerText = postInfo.title;
-				document.getElementById('date').innerText = postInfo.date;
-				document.getElementById('tags').innerHTML = postInfo.tags
-					.map(t => `<span class="tag">${t}</span>`).join(' ');
-
-				// 3. 使用 marked 解析 Markdown
-				document.getElementById('content').innerHTML = marked.parse(text);
-				
-			} catch (err) {
-				document.getElementById('content').innerHTML = "內容載入失敗，請檢查路徑或檔案是否存在。";
-				console.error("載入文章發生錯誤:", err);
-			}
-		}
-	</script>
-	
-	
-	<script>
 		let lastScrollY = window.scrollY;
 		const header = document.querySelector('.header');
 
@@ -793,100 +761,49 @@
 		}
 	</script>
 	
-	<script src="posts.js"></script>
+	
+	<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 	<script>
-		/**
-		 * 1. 核心邏輯：載入文章
-		 */
-		async function loadPost(path) {
-			const contentDiv = document.getElementById('content');
-			try {
-				const [infoRes, textRes] = await Promise.all([
-					fetch(`${path}/info.json`),
-					fetch(`${path}/content.txt`)
-				]);
-				const postInfo = await infoRes.json();
-				const text = await textRes.text();
-				
-				document.getElementById('title').innerText = postInfo.title;
-				document.getElementById('date').innerText = postInfo.date;
-				document.getElementById('tags').innerHTML = postInfo.tags
-					.map(t => `<span class="tag">${t}</span>`).join(' ');
-				
-				document.getElementById('content').innerHTML = marked.parse(text);
-			} catch (err) {
-				contentDiv.innerHTML = "內容載入失敗。";
-			}
-		}
-
-		/**
-		 * 2. 核心邏輯：渲染目錄
-		 */
-		async function renderPostsByCategory() {
-			const container = document.getElementById('posts-by-category');
-			if (!container || typeof posts === 'undefined') return;
-			
-			const postsWithInfo = await Promise.all(posts.map(async (path) => {
-				try {
-					const res = await fetch(`${path}/info.json`);
-					const info = await res.json();
-					return { path, ...info };
-				} catch (e) { return null; }
-			}));
-
-			const grouped = postsWithInfo.filter(p => p !== null).reduce((acc, p) => {
-				if (!acc[p.category]) acc[p.category] = [];
-				acc[p.category].push(p);
-				return acc;
-			}, {});
-
-			container.innerHTML = Object.keys(grouped).map(catName => `
-				<div class="category-group">
-					<h4 class="category-subtitle">${catName}</h4>
-					${grouped[catName].sort((a,b) => new Date(b.date) - new Date(a.date)).map(p => `
-						<div class="post-item">
-							<div style="display: flex; align-items: center;">
-								<div class="timeline__dot" style="margin-right: 12px;"></div>
-								<a href="?path=${p.path}" class="post-title">${p.title}</a>
-							</div>
-							<span class="post-date">${p.date.replace(/-/g, '.')}</span>
-						</div>
-					`).join('')}
-				</div>
-			`).join('');
-		}
-
-		/**
-		 * 3. 頁面初始化與功能串接
-		 */
-		window.addEventListener('DOMContentLoaded', () => {
-			// 處理 Header 滾動與 News (共用邏輯)
-			const header = document.querySelector('.header');
-			let lastScrollY = window.scrollY;
-			window.addEventListener('scroll', () => {
-				if (window.scrollY > lastScrollY && window.scrollY > 100) header.classList.add('header--hidden');
-				else header.classList.remove('header--hidden');
-				lastScrollY = window.scrollY;
-			});
-
-			const newsCard = document.getElementById('txt-content');
-			if (typeof newsData !== 'undefined' && newsCard) {
-				const paragraphs = newsData.split('\n').filter(l => l.trim() !== "").map(l => `<p style="margin-bottom: 8px; font-size: 15px; color: #D2C9D4; line-height: 1.6;">${l.trim()}</p>`).join('');
-				newsCard.innerHTML = '<h3 class="sidebar__title">News</h3>' + paragraphs;
-			}
-
-			// 處理路徑邏輯
+		async function loadPost() {
 			const params = new URLSearchParams(window.location.search);
-			const postPath = params.get('path');
-
-			if (postPath) {
-				document.getElementById('articles').style.display = 'none';
-				document.getElementById('posts-by-category').style.display = 'none';
-				loadPost(postPath);
-			} else {
-				renderPostsByCategory();
+			const path = params.get('path');
+			
+			if (!path) {
+				document.getElementById('content').innerHTML = "Please specify the article path.";
+				return;
 			}
-		});
+
+			// 1. 動態載入 .js 檔案
+			const script = document.createElement('script');
+			script.src = `${path}/info.js`; // 這裡載入你的 info.js
+			document.body.appendChild(script);
+
+			script.onload = async () => {
+				try {
+					// 2. 獲取文章內容 (.txt)
+					const textRes = await fetch(`${path}/content.txt`);
+					const text = await textRes.text();
+
+					// 3. 渲染頁面 (這裡假設 info.js 裡定義了全域變數 postInfo)
+					// 若你的變數名稱不同，請修改這裡
+					document.getElementById('title').innerText = postInfo.title;
+					document.getElementById('date').innerText = postInfo.date;
+					document.getElementById('tags').innerHTML = postInfo.tags
+						.map(t => `<span class="tag">${t}</span>`).join(' ');
+
+					document.getElementById('content').innerHTML = marked.parse(text);
+				} catch (err) {
+					document.getElementById('content').innerHTML = "Failed to load content.";
+					console.error("Error:", err);
+				}
+			};
+
+			script.onerror = () => {
+				document.getElementById('content').innerHTML = "Failed to load metadata file.";
+			};
+		}
+
+		window.addEventListener('DOMContentLoaded', loadPost);
 	</script>
 	
 
