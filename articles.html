@@ -160,6 +160,18 @@
             align-items: center;
             gap: 4px;
         }
+		
+		.hero__meta span svg {
+			margin-right: 6px;
+			vertical-align: middle;
+		}
+		/* 進一步收緊英雄區標題下方間距 */
+		.hero {
+			padding: 120px 20px 30px 20px;
+		}
+		.hero__title {
+			margin-bottom: 10px;
+		}
         
         /* ==========================================================================
            4. 版面主佈局容器 (Main Layout)
@@ -627,7 +639,7 @@
     <div class="hero">
         <h1 id="title" class="hero__title">Loading...</h1>
         <div class="hero__meta">
-            <span id="date"></span> | Tags: <span id="tags"></span>
+            <span id="date"></span>  |  <span id="tags"></span>
         </div>
     </div>
     
