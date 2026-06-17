@@ -762,6 +762,7 @@
 	</script>
 	
 	
+	<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 	<script>
 		async function loadPost() {
 			const params = new URLSearchParams(window.location.search);
@@ -778,17 +779,23 @@
 
 			script.onload = async () => {
 				try {
+					// 等待確保 postInfo 已載入
+					if (typeof postInfo === 'undefined') throw new Error("Metadata not loaded");
+
 					const textRes = await fetch(`${path}/content.txt`);
 					const text = await textRes.text();
 
-					// 定義圖示
-					const clockIcon = `<svg style="vertical-align: middle; margin-right: 4px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>`;
-					const tagIcon = `<svg style="vertical-align: middle; margin-right: 4px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>`;
+					// SVG 圖示
+					const clockIcon = `<svg style="vertical-align: middle;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>`;
+					const tagIcon = `<svg style="vertical-align: middle;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>`;
 
+					// 渲染
 					document.getElementById('title').innerText = postInfo.title;
-					document.getElementById('date').innerHTML = `${clockIcon}${postInfo.date}`;
-					document.getElementById('tags').innerHTML = `${tagIcon}` + postInfo.tags
-						.map(t => `<span class="tag">${t}</span>`).join(''); // 標籤之間不留空格
+					document.getElementById('date').innerHTML = `<span>${clockIcon} ${postInfo.date}</span>`;
+					
+					// 渲染標籤
+					const tagsHtml = postInfo.tags.map(t => `<span class="tag">${t}</span>`).join('');
+					document.getElementById('tags').innerHTML = `<span>${tagIcon} ${tagsHtml}</span>`;
 
 					document.getElementById('content').innerHTML = marked.parse(text);
 				} catch (err) {
@@ -804,7 +811,6 @@
 
 		window.addEventListener('DOMContentLoaded', loadPost);
 	</script>
-	
 
 
 </body>
