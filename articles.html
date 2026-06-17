@@ -731,40 +731,32 @@
 		async function loadPost() {
 			const params = new URLSearchParams(window.location.search);
 			const postPath = params.get('path');
-			
-			// If no path is provided, stop execution
 			if (!postPath) return;
 
-			// Dynamically load the info.js file
+			// 引入該文章的 info.js
 			const script = document.createElement('script');
 			script.src = `${postPath}/info.js`;
 			document.body.appendChild(script);
 
-			try {
-				// Fetch the content.txt file
-				const response = await fetch(`${postPath}/content.txt`);
-				if (!response.ok) throw new Error("File not found");
-				const text = await response.text();
-				
-				// Execute after info.js is loaded
-				script.onload = () => {
+			script.onload = async () => {
+				try {
+					// 讀取 content.txt
+					const response = await fetch(`${postPath}/content.txt`);
+					const text = await response.text();
+					
+					// 渲染內容
 					document.getElementById('title').innerText = postInfo.title;
 					document.getElementById('date').innerText = postInfo.date;
-					
-					// Map tags into span elements
 					document.getElementById('tags').innerHTML = postInfo.tags
-						.map(t => `<span class="tag">${t}</span>`)
-						.join(' ');
-					
-					// Replace line breaks with <br> for display
-					document.getElementById('content').innerHTML = text.replace(/\n/g, '<br>');
-				};
-			} catch (err) {
-				// Display error message if loading fails
-				document.getElementById('content').innerText = "Failed to load the article.";
-			}
+						.map(t => `<span class="tag">${t}</span>`).join(' ');
+					document.getElementById('content').innerHTML = `<p>${text.replace(/\n/g, '</p><p>')}</p>`;
+				} catch (err) {
+					document.getElementById('content').innerHTML = "Failed to load the article.";
+				}
+			};
 		}
 		
+		// 確保只執行文章載入，不要執行首頁的目錄渲染
 		window.addEventListener('DOMContentLoaded', loadPost);
 	</script>
 	
@@ -802,30 +794,58 @@
 	
 	<script src="posts.js"></script>
 	<script>
+		// 檢查目前頁面是否有 path 參數
+		const params = new URLSearchParams(window.location.search);
+		const postPath = params.get('path');
+
+		// 執行邏輯開關
+		window.addEventListener('DOMContentLoaded', () => {
+			if (postPath) {
+				// 如果網址有 ?path=...，就只執行讀取文章
+				loadPost(postPath);
+			} else {
+				// 如果網址沒有參數，代表是在首頁，只執行渲染目錄
+				renderPostsByCategory();
+			}
+		});
+
+		async function loadPost(path) {
+			// ... (你原本 loadPost 的邏輯，但請移除裡面的 window.addEventListener)
+			const script = document.createElement('script');
+			script.src = `${path}/info.js`;
+			document.body.appendChild(script);
+
+			script.onload = async () => {
+				try {
+					const response = await fetch(`${path}/content.txt`);
+					const text = await response.text();
+					document.getElementById('title').innerText = postInfo.title;
+					document.getElementById('date').innerText = postInfo.date;
+					document.getElementById('tags').innerHTML = postInfo.tags
+						.map(t => `<span class="tag">${t}</span>`).join(' ');
+					document.getElementById('content').innerHTML = `<p>${text.replace(/\n/g, '</p><p>')}</p>`;
+				} catch (err) {
+					document.getElementById('content').innerHTML = "內容載入失敗。";
+				}
+			};
+		}
+
 		async function renderPostsByCategory() {
 			const container = document.getElementById('posts-by-category');
 			if (!container) return;
 			
-			// 1. 預讀取所有文章的 info.js
-			// 這裡會建立一個 Promise 陣列，等待所有檔案載入完成
+			// ... (你原本 renderPostsByCategory 的邏輯，保持不動)
 			const postsWithInfo = await Promise.all(posts.map(async (path) => {
 				return new Promise((resolve) => {
 					const script = document.createElement('script');
 					script.src = `${path}/info.js`;
-					// 載入成功後，將 postInfo 與路徑合併成一個物件
-					script.onload = () => {
-						resolve({ path: path, ...postInfo });
-					};
-					// 如果檔案遺失，則回傳 null
+					script.onload = () => resolve({ path: path, ...postInfo });
 					script.onerror = () => resolve(null);
 					document.body.appendChild(script);
 				});
 			}));
 
-			// 過濾掉載入失敗的項目
 			const validPosts = postsWithInfo.filter(p => p !== null);
-
-			// 2. 自動根據 category 進行分組 (不需預定義 categorySettings)
 			const grouped = validPosts.reduce((acc, p) => {
 				if (!acc[p.category]) acc[p.category] = [];
 				acc[p.category].push(p);
@@ -833,21 +853,17 @@
 			}, {});
 
 			container.innerHTML = '';
-
-			// 3. 渲染每一個分類區塊
 			Object.keys(grouped).forEach(catName => {
 				const sortedList = grouped[catName].sort((a, b) => new Date(b.date) - new Date(a.date));
-				
 				const section = document.createElement('div');
 				section.className = 'category-group';
-				
 				section.innerHTML = `
 					<h4 class="category-subtitle">${catName}</h4>
 					${sortedList.map(p => `
 						<div class="post-item">
 							<div style="display: flex; align-items: center;">
 								<div class="timeline__dot" style="margin-right: 12px;"></div>
-								<a href="articles.html?path=${p.path}" class="post-title">${p.title}</a>
+								<a href="article.html?path=${p.path}" class="post-title">${p.title}</a>
 							</div>
 							<span class="post-date">${p.date.replace(/-/g, '.')}</span>
 						</div>
@@ -856,8 +872,6 @@
 				container.appendChild(section);
 			});
 		}
-
-		renderPostsByCategory();
 	</script>
 
 
