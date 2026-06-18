@@ -658,19 +658,17 @@
 		
 		#content pre {
 			background: #1e1e20 !important;
-			padding: 20px !important;
+			padding: 0 !important; /* 因為我們會把 padding 給內層的 code */
 			border-radius: 8px !important;
-			border: 1px solid rgba(255, 255, 255, 0.1) !important;
-			overflow-x: auto !important;
 			margin: 20px 0 !important;
-			display: block !important;
+			border: 1px solid rgba(255, 255, 255, 0.1) !important;
 		}
 
 		#content pre code {
+			display: block;
+			padding: 20px !important;
 			background: transparent !important;
-			padding: 0 !important;
-			display: inline-block !important; /* 確保內容能完整顯示 */
-			font-family: 'Consolas', 'Monaco', 'Courier New', monospace !important;
+			overflow-x: auto;
 		}
 		
 	</style>
