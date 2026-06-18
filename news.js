@@ -1,3 +1,3 @@
 const newsData = `
-coming soon~~
+Hsuan's Corner 上架啦! 
 `;
