@@ -815,38 +815,48 @@
 		async function loadPost() {
 			const params = new URLSearchParams(window.location.search);
 			const path = params.get('path');
-			if (!path) return;
 			
-			// 載入 meta 資料
+			if (!path) {
+				document.getElementById('content').innerHTML = "Please specify the article path.";
+				return;
+			}
+			
 			const script = document.createElement('script');
 			script.src = `${path}/info.js`; 
 			document.body.appendChild(script);
 
 			script.onload = async () => {
 				try {
+					// 等待確保 postInfo 已載入
+					if (typeof postInfo === 'undefined') throw new Error("Metadata not loaded");
+
 					const textRes = await fetch(`${path}/content.txt`);
 					const text = await textRes.text();
 
-					// 渲染標題、日期、標籤 (加入 SVG 圖示)
-					const clockIcon = `<svg style="vertical-align: middle; margin-right: 6px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>`;
-					const tagIcon = `<svg style="vertical-align: middle; margin-right: 6px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path></svg>`;
+					// SVG 圖示
+					const clockIcon = `<svg style="vertical-align: middle;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>`;
+					const tagIcon = `<svg style="vertical-align: middle;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>`;
 
-					document.getElementById('title').innerText = window.postInfo.title;
-					document.getElementById('date').innerHTML = `<span>${clockIcon}${window.postInfo.date}</span>`;
-					document.getElementById('tags').innerHTML = `<span>${tagIcon}${window.postInfo.tags.map(t => `<span class="tag">${t}</span>`).join('')}</span>`;
+					// 渲染
+					document.getElementById('title').innerText = postInfo.title;
+					document.getElementById('date').innerHTML = `<span>${clockIcon} ${postInfo.date}</span>`;
+					
+					// 渲染標籤
+					const tagsHtml = postInfo.tags.map(t => `<span class="tag">${t}</span>`).join('');
+					document.getElementById('tags').innerHTML = `<span>${tagIcon} ${tagsHtml}</span>`;
 
-					// 解析 Markdown
 					document.getElementById('content').innerHTML = marked.parse(text);
-
-					// 強制所有連結在新視窗開啟
-					document.querySelectorAll('#content a').forEach(a => {
-						a.setAttribute('target', '_blank');
-					});
 				} catch (err) {
+					document.getElementById('content').innerHTML = "Failed to load content.";
 					console.error("Error:", err);
 				}
 			};
+
+			script.onerror = () => {
+				document.getElementById('content').innerHTML = "Failed to load metadata file.";
+			};
 		}
+
 		window.addEventListener('DOMContentLoaded', loadPost);
 	</script>
 
