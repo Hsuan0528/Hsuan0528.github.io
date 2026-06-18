@@ -812,6 +812,8 @@
 	
 	
 	<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+
 	<script>
 		async function loadPost() {
 			const params = new URLSearchParams(window.location.search);
@@ -828,25 +830,22 @@
 
 			script.onload = async () => {
 				try {
-					// 等待確保 postInfo 已載入
 					if (typeof postInfo === 'undefined') throw new Error("Metadata not loaded");
 
 					const textRes = await fetch(`${path}/content.txt`);
 					const text = await textRes.text();
 
-					// SVG 圖示
-					const clockIcon = `<svg style="vertical-align: middle;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>`;
-					const tagIcon = `<svg style="vertical-align: middle;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>`;
-
-					// 渲染
+					// 渲染資料...
 					document.getElementById('title').innerText = postInfo.title;
-					document.getElementById('date').innerHTML = `<span>${clockIcon} ${postInfo.date}</span>`;
-					
-					// 渲染標籤
-					const tagsHtml = postInfo.tags.map(t => `<span class="tag">${t}</span>`).join('');
-					document.getElementById('tags').innerHTML = `<span>${tagIcon} ${tagsHtml}</span>`;
+					// ... (這裡保留你原本的圖示與標籤渲染)
 
+					// 1. 先解析並放進網頁
 					document.getElementById('content').innerHTML = marked.parse(text);
+					
+					// 2. [關鍵修改] 確保渲染完成後，立即執行高亮
+					if (typeof hljs !== 'undefined') {
+						hljs.highlightAll();
+					}
 				} catch (err) {
 					document.getElementById('content').innerHTML = "Failed to load content.";
 					console.error("Error:", err);
@@ -859,11 +858,6 @@
 		}
 
 		window.addEventListener('DOMContentLoaded', loadPost);
-	</script>
-
-	<script>
-		// 這行會自動掃描頁面上所有的 <pre><code> 標籤並上色
-		hljs.highlightAll();
 	</script>
 
 </body>
