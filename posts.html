@@ -852,11 +852,15 @@
 			const pagePosts = allPosts.slice(start, start + itemsPerPage);
 			
 			pagePosts.forEach(p => {
+				// 這裡將標籤陣列轉換為 HTML
+				const tagsHtml = p.tags ? p.tags.map(t => `<span class="tag">${t}</span>`).join('') : '';
+				
 				grid.innerHTML += `
 					<div class="post-item">
 						<div style="display: flex; align-items: center;">
 							<div class="timeline__dot"></div>
 							<a href="articles.html?path=${p.path}" class="post-title">${p.title}</a>
+							<span style="margin-left: 10px;">${tagsHtml}</span>
 						</div>
 						<span class="post-date">${p.date.replace(/-/g, '.')}</span>
 					</div>`;

@@ -6,7 +6,7 @@
     <title>Posts | Hsuan's Corner!</title>
     <link rel="icon" href="icon.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
-	
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     
     <style>
         /* ==========================================================================
@@ -810,6 +810,7 @@
 	</script>
 	
 	
+	
 	<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 	<script>
 		async function loadPost() {
@@ -860,6 +861,10 @@
 		window.addEventListener('DOMContentLoaded', loadPost);
 	</script>
 
+	<script>
+		// 這行會自動掃描頁面上所有的 <pre><code> 標籤並上色
+		hljs.highlightAll();
+	</script>
 
 </body>
 </html>

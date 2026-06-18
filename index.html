@@ -772,26 +772,20 @@
 			const container = document.getElementById('posts-by-category');
 			if (!container) return;
 			
-			// 1. 預讀取所有文章的 info.js
-			// 這裡會建立一個 Promise 陣列，等待所有檔案載入完成
 			const postsWithInfo = await Promise.all(posts.map(async (path) => {
 				return new Promise((resolve) => {
 					const script = document.createElement('script');
 					script.src = `${path}/info.js`;
-					// 載入成功後，將 postInfo 與路徑合併成一個物件
 					script.onload = () => {
 						resolve({ path: path, ...postInfo });
 					};
-					// 如果檔案遺失，則回傳 null
 					script.onerror = () => resolve(null);
 					document.body.appendChild(script);
 				});
 			}));
 
-			// 過濾掉載入失敗的項目
 			const validPosts = postsWithInfo.filter(p => p !== null);
 
-			// 2. 自動根據 category 進行分組 (不需預定義 categorySettings)
 			const grouped = validPosts.reduce((acc, p) => {
 				if (!acc[p.category]) acc[p.category] = [];
 				acc[p.category].push(p);
@@ -800,24 +794,29 @@
 
 			container.innerHTML = '';
 
-			// 3. 渲染每一個分類區塊
 			Object.keys(grouped).forEach(catName => {
 				const sortedList = grouped[catName].sort((a, b) => new Date(b.date) - new Date(a.date));
 				
 				const section = document.createElement('div');
 				section.className = 'category-group';
 				
+				// --- 核心修改：加入標籤渲染 ---
 				section.innerHTML = `
 					<h4 class="category-subtitle">${catName}</h4>
-					${sortedList.map(p => `
+					${sortedList.map(p => {
+						// 處理標籤邏輯
+						const tagsHtml = p.tags ? p.tags.map(t => `<span class="tag">${t}</span>`).join('') : '';
+						return `
 						<div class="post-item">
-							<div style="display: flex; align-items: center;">
-								<div class="timeline__dot" style="margin-right: 12px;"></div>
+							<div style="display: flex; align-items: center; flex-wrap: wrap;">
+								<div class="timeline__dot" style="margin-right: 12px; flex-shrink: 0;"></div>
 								<a href="articles.html?path=${p.path}" class="post-title">${p.title}</a>
+								<span style="margin-left: 10px;">${tagsHtml}</span>
 							</div>
-							<span class="post-date">${p.date.replace(/-/g, '.')}</span>
+							<span class="post-date" style="flex-shrink: 0;">${p.date.replace(/-/g, '.')}</span>
 						</div>
-					`).join('')}
+						`;
+					}).join('')}
 				`;
 				container.appendChild(section);
 			});
